@@ -1,40 +1,12 @@
 pipeline {
-    agent none
+    agent any
+    parameters {
+        string(name: 'Greeting', defaultValue: 'Hello', description: 'How should I greet the world?')
+    }
     stages {
-        stage('Build') {
-            agent any
+        stage('Example') {
             steps {
-                checkout scm
-                sh 'make'
-                stash includes: '**/target/*.jar', name: 'app' 
-            }
-        }
-        stage('Test on Linux') {
-            agent { 
-                label 'linux'
-            }
-            steps {
-                unstash 'app' 
-                sh 'make check'
-            }
-            post {
-                always {
-                    junit '**/target/*.xml'
-                }
-            }
-        }
-        stage('Test on Windows') {
-            agent {
-                label 'windows'
-            }
-            steps {
-                unstash 'app'
-                bat 'make check' 
-            }
-            post {
-                always {
-                    junit '**/target/*.xml'
-                }
+                echo "${params.Greeting}  Welcome to Jenkins World!"
             }
         }
     }
